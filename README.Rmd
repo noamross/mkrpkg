@@ -25,7 +25,7 @@ Author: _{{<<AUTHOR_NAME}}_
 [![codecov](https://codecov.io/gh/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}/branch/master/graph/badge.svg){data-external="1"}](https://codecov.io/gh/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}})
 [![CRAN status](https://www.r-pkg.org/badges/version/{{<<PACKAGE_NAME>>}}){data-external="1"}](https://cran.r-project.org/package={{<<PACKAGE_NAME>>}})
 
-{{<<PACKAGE_DESCRIPTION>>}}
+{{<<DESCRIPTION>>}}
 
 ## Installation
 
@@ -45,6 +45,6 @@ This is a basic example which shows you how to solve a common problem:
 
 ## Contributing
 
-Want have feedback or want to contribute? Great! Please take a look at the [contributing guidelines]() before filing an issue or pull request. 
+Want have feedback or want to contribute? Great! Please take a look at the [contributing guidelines](https://github.com/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}/blob/master/.github/CONTRIBUTING.md) before filing an issue or pull request. 
 
-Please note that this project is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Contributor Code of Conduct](https://github.com/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}/blob/master/.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
