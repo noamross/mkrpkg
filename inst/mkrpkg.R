@@ -21,13 +21,13 @@ suppressPackageStartupMessages({
   })
 parser <- ArgumentParser()
 parser$add_argument("pkgname", nargs = 1, help = "package name", default = NULL)
-parser$add_argument("-o", "--organization", nargs = 1, help = "github organization", default = NULL)
+parser$add_argument("-o", "--organization", type="character", help = "github organization", default = NULL)
 parser$add_argument("-p", "--private", action = "store_true", help = "whether to use a private repository", default = FALSE)
-parser$add_argument("-d", "--description", nargs = 1, action = "store_true", default = "It does some stuff")
-parser$add_argument("--rstudio", help = "open the project in Rstudio", action = "store_true")
+parser$add_argument("-d", "--description", type="character", default = "It does some stuff")
+parser$add_argument("--rstudio", help = "open the project in Rstudio", action = "store_true", default = TRUE)
 parser$add_argument("--author", help = "package author name", default = git2r::config()$global$user.name)
 parser$add_argument("--email", help = "author email", default = git2r::config()$global$user.email)
-parser$add_argument("--parent", help = "parent directory for project", default = options("projects.dir"))
+parser$add_argument("--parent", help = "parent directory for project", default = getOption("projects.dir"))
 parser$add_argument("--github", help = "push to github after initializing", action = "store_true", default = FALSE)
 parser$add_argument("--git", help = "create a git repository if one does not exist", action = "store_true", default = TRUE)
 parser$add_argument("--pkgdown", help = "build pkgdown site", action = "store_true", default = FALSE)
@@ -101,6 +101,7 @@ file.rename(to_rename, renamed)
 
 files <- list.files(all.files = TRUE, full.names=TRUE, recursive = TRUE)
 files <- grep("(\\.git|\\.Rproj\\.user)/.*", files, value = TRUE, invert = TRUE)
+Sys.setlocale('LC_ALL','C')
 for (f in files) {
   x <- readLines(f)
   x <- gsub("{{<<PACKAGE_NAME>>}}", args$pkgname, x, fixed = TRUE)
@@ -146,4 +147,6 @@ if(args$github) {
               cred = cred_user_pass("EMAIL", gh::gh_token()))
 }
 
-
+if(args$rstudio && Sys.info()["sysname"] == "Darwin") {
+  system2(command = "open", args = paste0(args$pkgname, ".Rproj"))
+}
