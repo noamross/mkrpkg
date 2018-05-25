@@ -155,10 +155,9 @@ if(args$github) {
               cred = cred_user_pass("EMAIL", gh::gh_token()))
   gh::gh("PUT /repos/:owner/:repo/topics", owner=gh_user, repo=args$pkgname,
          names = "r")
-
+  usethis::browse_github()
 
 }
-
 
 if(args$rstudio && Sys.info()["sysname"] == "Darwin") {
   system2(command = "open", args = paste0(args$pkgname, ".Rproj"))
