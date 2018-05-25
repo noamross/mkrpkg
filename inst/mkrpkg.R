@@ -115,6 +115,7 @@ for (f in files) {
   cat(x, file = f, sep = "\n")
 }
 
+devtools::install()
 rmarkdown::render("README.Rmd")
 
 if(args$pkgdown) {
@@ -136,17 +137,28 @@ if(args$github) {
   git2r::remote_add(name="origin", url = paste0("https://github.com/", gh_user, "/", args$pkgname, ".git"))
   if (is.null(args$organization)) {
     create <- gh::gh("POST /user/repos", name = args$pkgname,
-                     description = args$description, private = args$private)
+                     description = args$description, private = args$private,
+                     homepage = ifelse(args$pkgdown,
+                                       paste0("https://", gh_user, ".github.io/", args$pkgname),
+                                       NULL))
   }
   else {
     create <- gh::gh("POST /orgs/:org/repos", org = args$organization,
                      name = args$pkgname, description = args$description,
-                     private = args$private)
+                     private = args$private,
+                     homepage = ifelse(args$pkgdown,
+                                       paste0("https://", gh_user, ".github.io/", args$pkgname),
+                                       NULL))
   }
   git2r::branch_set_upstream(repository_head(), "master")
   git2r::push(name = "origin", refspec = "refs/heads/master",
               cred = cred_user_pass("EMAIL", gh::gh_token()))
+  gh::gh("PUT /repos/:owner/:repo/topics", owner=gh_user, repo=args$pkgname,
+         names = "r")
+
+
 }
+
 
 if(args$rstudio && Sys.info()["sysname"] == "Darwin") {
   system2(command = "open", args = paste0(args$pkgname, ".Rproj"))

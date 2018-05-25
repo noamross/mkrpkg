@@ -50,7 +50,7 @@ library({{<<PACKAGE_NAME>>}})
 
 # Current Verison
 
-```
+```{r version}
 packageVersion("{{<<PACKAGE_NAME>>}}")
 ```
 
