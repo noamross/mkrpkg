@@ -142,7 +142,7 @@ if(args$github) {
                      description = args$description, private = args$private,
                      homepage = ifelse(args$pkgdown,
                                        paste0("https://", gh_user, ".github.io/", args$pkgname),
-                                       NULL))
+                                       ""))
   }
   else {
     create <- gh::gh("POST /orgs/:org/repos", org = args$organization,
@@ -150,7 +150,7 @@ if(args$github) {
                      private = args$private,
                      homepage = ifelse(args$pkgdown,
                                        paste0("https://", gh_user, ".github.io/", args$pkgname),
-                                       NULL))
+                                       ""))
   }
   git2r::branch_set_upstream(repository_head(), "master")
   git2r::push(name = "origin", refspec = "refs/heads/master",
