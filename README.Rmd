@@ -42,7 +42,7 @@ options(width=120)
 ## Usage
 
 ```{r example}
-library({{<<PACKAGE_NAME>>}})
+#library({{<<PACKAGE_NAME>>}})
 
 # some example code
 ```
@@ -51,7 +51,7 @@ library({{<<PACKAGE_NAME>>}})
 # Current Verison
 
 ```{r version}
-packageVersion("{{<<PACKAGE_NAME>>}}")
+#packageVersion("{{<<PACKAGE_NAME>>}}")
 ```
 
 ## Contributing

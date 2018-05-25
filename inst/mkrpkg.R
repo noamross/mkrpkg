@@ -115,7 +115,8 @@ for (f in files) {
   cat(x, file = f, sep = "\n")
 }
 
-devtools::install()
+devtools::document()
+#devtools::install()
 rmarkdown::render("README.Rmd")
 
 if(args$pkgdown) {
