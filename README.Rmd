@@ -35,12 +35,23 @@ Install the **{{<<PACKAGE_NAME>>}}** package with this command:
 source("https://install-github.me/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}")
 ```
 
-## Example
+```{r message=FALSE, warning=FALSE, error=FALSE, include=FALSE}
+options(width=120)
+```
 
-This is a basic example which shows you how to solve a common problem:
+## Usage
 
 ```{r example}
-## basic example code
+library({{<<PACKAGE_NAME>>}})
+
+# some example code
+```
+
+
+# Current Verison
+
+```
+packageVersion("{{<<PACKAGE_NAME>>}}")
 ```
 
 ## Contributing

@@ -28,6 +28,7 @@ parser$add_argument("--rstudio", help = "open the project in Rstudio", action = 
 parser$add_argument("--author", help = "package author name", default = git2r::config()$global$user.name)
 parser$add_argument("--email", help = "author email", default = git2r::config()$global$user.email)
 parser$add_argument("--parent", help = "parent directory for project", default = getOption("projects.dir"))
+parser$add_argument("--orcid", help = "author ORCiD", default = getOption("orcid"))
 parser$add_argument("--github", help = "push to github after initializing", action = "store_true", default = FALSE)
 parser$add_argument("--git", help = "create a git repository if one does not exist", action = "store_true", default = TRUE)
 parser$add_argument("--pkgdown", help = "build pkgdown site", action = "store_true", default = FALSE)
@@ -44,9 +45,10 @@ q_na <- function(x) {
   }
 }
 
-authors_r <- glue("person({given}, {family}, {middle}, email = {email}, role = c('aut', 'cre'))",
+authors_r <- glue("person({given}, {family}, {middle}, email = {email}, role = c('aut', 'cre'){orcid})",
   .na = "", given = q_na(hf$first_name), family = q_na(hf$last_name),
-  middle = q_na(hf$middle_name), email = q_na(args$email)
+  middle = q_na(hf$middle_name), email = q_na(args$email),
+  orcid = ifelse(is.null(args$orcid), NA, paste0(", comment = c(ORCID='", args$orcid, "')"))
 )
 
 if (is.null(args$pkgname)) {
@@ -128,11 +130,10 @@ if(args$git) {
   git2r::add(path = unlist(git2r::status()))
   git2r::commit(message = "Initial commit")
   usethis::use_git_hook("pre-commit", system.file("templates", "readme-rmd-pre-commit.sh", package = "usethis"))
-  git2r::remote_add(name="origin", url = paste0("https://github.com/", gh_user, "/", args$pkgname, ".git"))
-
 }
 
 if(args$github) {
+  git2r::remote_add(name="origin", url = paste0("https://github.com/", gh_user, "/", args$pkgname, ".git"))
   if (is.null(args$organization)) {
     create <- gh::gh("POST /user/repos", name = args$pkgname,
                      description = args$description, private = args$private)
