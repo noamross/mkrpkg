@@ -112,6 +112,7 @@ for (f in files) {
   x <- gsub("{{<<AUTHOR>>}}", args$author, x, fixed = TRUE)
   x <- gsub("{{<<AUTHOR_EMAIL>>}}", args$email, x, fixed = TRUE)
   x <- gsub("{{<<AUTHORS_R>>}}", authors_r, x, fixed = TRUE)
+  x <- gsub("{{<<YEAR>>}}", strftime(Sys.Date(), "%Y"), x, fixed = TRUE)
   cat(x, file = f, sep = "\n")
 }
 
