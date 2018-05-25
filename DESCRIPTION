@@ -1,11 +1,15 @@
-Package: mkrpkg
+Package: {{<<PACKAGE_NAME>>}}
 Version: 0.0.0.9000
-Title: What the Package Does (One Line, Title Case)
-Description: What the package does (one paragraph).
-Authors@R: person("Noam", "Ross", email = "noam.ross@gmail.ocom", role = c("aut", "cre"))
+Title: {{<<DESCRIPTION>>}}
+Description: {{<<DESCRIPTION>>}}
+Authors@R: {{<<AUTHORS_R>>}}
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-URL: https://github.com/noamross/mkrpkg
-BugReports: https://github.com/noamross/mkrpkg/issues
+URL: https://github.com/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}
+BugReports: https://github.com/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}/issues
+Suggests: 
+    testthat,
+    roxygen2
+    
