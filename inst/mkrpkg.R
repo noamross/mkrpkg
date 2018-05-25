@@ -29,8 +29,8 @@ parser$add_argument("--author", help = "package author name", default = git2r::c
 parser$add_argument("--email", help = "author email", default = git2r::config()$global$user.email)
 parser$add_argument("--parent", help = "parent directory for project", default = getOption("projects.dir"))
 parser$add_argument("--orcid", help = "author ORCiD", default = getOption("orcid"))
-parser$add_argument("--github", help = "push to github after initializing", action = "store_true", default = FALSE)
 parser$add_argument("--git", help = "create a git repository if one does not exist", action = "store_true", default = TRUE)
+parser$add_argument("--github", help = "push to github after initializing", action = "store_true", default = FALSE)
 parser$add_argument("--pkgdown", help = "build pkgdown site", action = "store_true", default = FALSE)
 parser$add_argument("--codemeta", help = "create codemeta.json", action = "store_true", default = TRUE)
 args <- parser$parse_args()
@@ -124,15 +124,14 @@ if(args$pkgdown) {
   pkgdown::build_site()
 }
 
-if(args$codemeta) {
-  codemetar::write_codemeta()
-}
-
 if(args$git) {
   git2r::init()
+  usethis::use_git_hook("pre-commit", file.path("inst", "readme-and-codemeta-hook.sh"))
+  file.remove(file.path("inst", "readme-and-codemeta-hook.sh"))
   git2r::add(path = unlist(git2r::status()))
   git2r::commit(message = "Initial commit")
-  usethis::use_git_hook("pre-commit", system.file("templates", "readme-rmd-pre-commit.sh", package = "usethis"))
+ #  usethis::use_git_hook("pre-commit", system.file("templates", "readme-rmd-pre-commit.sh", package = "usethis"))
+ # usethis::use_git_hook("pre-commit", system.file("templates", "description-codemetajson-pre-commit.sh", package = "codemetar"))
 }
 
 if(args$github) {
@@ -157,10 +156,18 @@ if(args$github) {
               cred = cred_user_pass("EMAIL", gh::gh_token()))
   gh::gh("PUT /repos/:owner/:repo/topics", owner=gh_user, repo=args$pkgname,
          names = I("r"), .send_headers = c(Accept = "application/vnd.github.mercy-preview+json"))
-  browseURL(desc::desc()$get_urls())
+  if(! args$codemeta) browseURL(desc::desc()$get_urls())
 
+}
+
+if(args$codemeta) {
+  codemetar::write_codemeta(use_git_hook = FALSE)
+  git2r::add(path = unlist(git2r::status()))
+  git2r::commit(message = "Add a codemeta.json file")
+  browseURL(desc::desc()$get_urls())
 }
 
 if(args$rstudio && Sys.info()["sysname"] == "Darwin") {
   system2(command = "open", args = paste0(args$pkgname, ".Rproj"))
 }
+
