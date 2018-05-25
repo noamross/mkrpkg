@@ -156,8 +156,8 @@ if(args$github) {
   git2r::push(name = "origin", refspec = "refs/heads/master",
               cred = cred_user_pass("EMAIL", gh::gh_token()))
   gh::gh("PUT /repos/:owner/:repo/topics", owner=gh_user, repo=args$pkgname,
-         names = "r")
-  usethis::browse_github()
+         names = I("r"), .send_headers = c(Accept = "application/vnd.github.mercy-preview+json"))
+  browseURL(desc::desc()$get_urls())
 
 }
 
