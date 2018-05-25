@@ -1,5 +1,7 @@
 ---
-output: github_document
+output:
+  github_document:
+    html_preview: FALSE
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -12,18 +14,25 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# mkrpkg
+# {{<<PACKAGE_NAME>>}}
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+Author: _{{<<AUTHOR_NAME}}_
 
-The goal of mkrpkg is to ...
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg){data-external="1"}](http://www.repostatus.org/#wip)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg){data-external="1"}](https://opensource.org/licenses/MIT)
+[![CircleCI](https://circleci.com/gh/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}.svg){data-external="1"}](https://circleci.com/gh/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}})
+  [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}?branch=master&svg=true){data-external="1"}](https://ci.appveyor.com/project/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}})
+[![codecov](https://codecov.io/gh/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}/branch/master/graph/badge.svg){data-external="1"}](https://codecov.io/gh/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}})
+[![CRAN status](https://www.r-pkg.org/badges/version/{{<<PACKAGE_NAME>>}}){data-external="1"}](https://cran.r-project.org/package={{<<PACKAGE_NAME>>}})
+
+{{<<PACKAGE_DESCRIPTION>>}}
 
 ## Installation
 
-You can install the released version of mkrpkg from [CRAN](https://CRAN.R-project.org) with:
+Install the **{{<<PACKAGE_NAME>>}}** package with this command:
 
-``` r
-install.packages("mkrpkg")
+```{r install_me, eval = FALSE}
+source("https://install-github.me/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}")
 ```
 
 ## Example
@@ -34,18 +43,8 @@ This is a basic example which shows you how to solve a common problem:
 ## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+## Contributing
 
-```{r cars}
-summary(cars)
-```
+Want have feedback or want to contribute? Great! Please take a look at the [contributing guidelines]() before filing an issue or pull request. 
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+Please note that this project is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
