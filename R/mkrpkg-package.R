@@ -9,6 +9,6 @@
 #' bug reports or other feedback at \url{https://github.com/{{<<GH_USER>>}}/{{<<PACKAGE_NAME>>}}/issues}
 #'
 #' @name {{<<PACKAGE_NAME>>}}
-#' @author {{<<AUTHOR>>}} \email{{<<AUTHOR_EMAIL>>}}
+#' @author {{<<AUTHOR>>}} \email{{{<<AUTHOR_EMAIL>>}}}
 #' @keywords package
 NULL
