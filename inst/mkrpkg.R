@@ -1,30 +1,50 @@
 #!/usr/bin/env Rscript
 
 # Parse Inputs
-
-suppressPackageStartupMessages(library("argparse"))
+if(!require(pacman)) {
+  install.packages("pacman")
+}
+suppressPackageStartupMessages({
+  pacman::p_load(
+    argparse,
+    humaniformat,
+    glue,
+    RCurl,
+    gh,
+    purrr,
+    rappdirs,
+    rmarkdown,
+    pkgdown,
+    codemetar,
+    git2r,
+    usethis)
+  })
 parser <- ArgumentParser()
 parser$add_argument("pkgname", nargs = 1, help = "package name", default = NULL)
 parser$add_argument("-o", "--organization", nargs = 1, help = "github organization", default = NULL)
 parser$add_argument("-p", "--private", action = "store_true", help = "whether to use a private repository", default = FALSE)
-parser$add_argument("-d", "--description", nargs = 1, action = "store_true", default = "What the Package Does (One Line, Title Case)")
+parser$add_argument("-d", "--description", nargs = 1, action = "store_true", default = "It does some stuff")
 parser$add_argument("--rstudio", help = "open the project in Rstudio", action = "store_true")
 parser$add_argument("--author", help = "package author name", default = git2r::config()$global$user.name)
 parser$add_argument("--email", help = "author email", default = git2r::config()$global$user.email)
 parser$add_argument("--parent", help = "parent directory for project", default = options("projects.dir"))
+parser$add_argument("--push", help = "push to github after initializing", action = "store_true", default = FALSE)
+parser$add_argument("--git", help = "create a git repository if one does not exist", action = "store_true", default = TRUE)
+parser$add_argument("--pkgdown", help = "build pkgdown site", action = "store_true", default = FALSE)
+parser$add_argument("--codemeta", help = "create codemeta.json", action = "store_true", default = TRUE)
 args <- parser$parse_args()
-# args <- list(pkgname = 'test', author = git2r::config()$global$user.name, email = git2r::config()$global$user.email, parent = getOption("projects.dir"))
-hf <- humaniformat::parse_names(args$author)
+# args <- list(pkgname = 'test', author = git2r::config()$global$user.name, email = git2r::config()$global$user.email, parent = getOption("projects.dir"), description = 'It does some stuff')
+hf <- parse_names(args$author)
 
 q_na <- function(x) {
   if (is.na(x)) {
     return(x)
   } else {
-    return(glue::single_quote(x))
+    return(single_quote(x))
   }
 }
 
-authors_r <- glue::glue("person({given}, {family}, {middle}, email = {email}, role = c('aut', 'cre'))",
+authors_r <- glue("person({given}, {family}, {middle}, email = {email}, role = c('aut', 'cre'))",
   .na = "", given = q_na(hf$first_name), family = q_na(hf$last_name),
   middle = q_na(hf$middle_name), email = q_na(args$email)
 )
@@ -39,40 +59,72 @@ if (is.null(args$pkgname)) {
 }
 pkgdir <- normalizePath(pkgdir, mustWork = FALSE)
 
+if(is.null(args$organization)) {
+  gh_user <- getOption("github.username")
+  if(is.null(gh_user)) {
+    if(is.character(getURL("github.com"))) {
+      gh_user <- gh_whoami()$login
+    } else {
+      stop("No organization specified, cannot determine GitHub username from token or getOption('github.username')")
+    }
+  }
+} else {
+  gh_user <- args$organization
+}
+
 td <- tempdir()
 if (!dir.exists(td)) dir.create(td)
 zpth <- file.path(td, "mkrpkg.zip")
-down <- purrr::safely(download.file)("https://github.com/noamross/mkrpkg/archive/master.zip",
+down <- safely(download.file)("https://github.com/noamross/mkrpkg/archive/master.zip",
   destfile = zpth, quiet = TRUE)
-zdir <- rappdirs::user_data_dir("mkrpkg")
-if (!is.null(down$error)) {
+zdir <- user_data_dir("mkrpkg")
+if (is.null(down$error)) {
   if (!dir.exists(zdir)) dir.create(zdir)
   file.copy(zpth, zdir, overwrite = TRUE)
 }
 
-if (!dir.exists(pkgdir)) pkgdir <- dir.create(pkgdir)
+if (!dir.exists(pkgdir)) zz <- dir.create(pkgdir)
 
-unzip(file.path(zdir, "mkrpkg.zip"), exdir = pkgdir, junkpaths = TRUE)
-
+unzip(file.path(zdir, "mkrpkg.zip"), exdir = td, overwrite = TRUE)
+file.copy(list.files(file.path(td, "mkrpkg-master"), all.files = TRUE,
+                     recursive = FALSE, full.names = TRUE, include.dirs = TRUE),
+          pkgdir, recursive = TRUE)
 setwd(pkgdir)
+mkscript <- file.path("inst", "mkrpkg.R")
+if(file.exists(mkscript)) file.remove(mkscript)
+
 to_rename <- normalizePath(list.files(pattern = "mkrpkg", recursive = TRUE,
                         include.dirs = TRUE, full.names = TRUE,
                         all.files = TRUE))
 renamed <- gsub("mkrpkg", args$pkgname, to_rename)
 file.rename(to_rename, renamed)
 
-if()
-git2r::init()
-usethis::use_git_hook("pre-commit", system.file("templates", "readme-rmd-pre-commit.sh", package = "usethis"))
-for (f in unlist(git2r::status(all_untracked = TRUE))) {
+files <- list.files(all.files = TRUE, full.names=TRUE, recursive = TRUE)
+files <- grep("(\\.git|\\.Rproj\\.user)/.*", files, value = TRUE, invert = TRUE)
+for (f in files) {
   x <- readLines(f)
-  y <- gsub("Merry Christmas", "Happy New Year", x)
-  cat(y, file = f, sep = "\n")
+  x <- gsub("{{<<PACKAGE_NAME>>}}", args$pkgname, x, fixed = TRUE)
+  x <- gsub("{{<<DESCRIPTION>>}}", args$description, x, fixed = TRUE)
+  x <- gsub("{{<<GH_USER>>}}", gh_user, x, fixed = TRUE)
+  x <- gsub("{{<<AUTHOR>>}}", args$author, x, fixed = TRUE)
+  x <- gsub("{{<<AUTHOR_EMAIL>>}}", args$email, x, fixed = TRUE)
+  x <- gsub("{{<<AUTHORS_R>>}}", authors_r, x, fixed = TRUE)
+  cat(x, file = f, sep = "\n")
 }
 
 rmarkdown::render("README.Rmd")
-pkgdown::build_site()
-git2r::add()
-git2r::commit(message = "initial commit")
-gh_info <- gh::gh_tree_remote(usethis::proj_get())
-codemetar::write_codemeta()
+
+if(args$pkgdown) {
+  pkgdown::build_site()
+}
+
+if(args$codemeta) {
+  codemetar::write_codemeta()
+}
+
+if(args$git) {
+  git2r::init()
+  git2r::add(path = unlist(git2r::status()))
+  git2r::commit(message = "Initial commit")
+  usethis::use_git_hook("pre-commit", system.file("templates", "readme-rmd-pre-commit.sh", package = "usethis"))
+}
