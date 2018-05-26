@@ -2,7 +2,7 @@
 output:
   github_document:
     html_preview: FALSE
-    md_extensions: "link_attributes"
+    md_extensions: "+link_attributes"
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
