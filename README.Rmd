@@ -1,7 +1,7 @@
 ---
 output:
   github_document:
-    html_preview: FALSE"
+    html_preview: FALSE
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
