@@ -2,6 +2,7 @@
 output:
   github_document:
     html_preview: FALSE
+    pandoc_args: ["--to", "gfm-ascii_identifiers+link_attributes"]
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
