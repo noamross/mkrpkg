@@ -1,8 +1,7 @@
 ---
 output:
   github_document:
-    html_preview: FALSE
-    md_extensions: "+link_attributes"
+    html_preview: FALSE"
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
