@@ -164,6 +164,10 @@ if(args$codemeta) {
   codemetar::write_codemeta(use_git_hook = FALSE)
   git2r::add(path = unlist(git2r::status()))
   git2r::commit(message = "Add a codemeta.json file")
+  if(args$github) {
+    git2r::push(name = "origin", refspec = "refs/heads/master",
+                cred = cred_user_pass("EMAIL", gh::gh_token()))
+  }
   browseURL(desc::desc()$get_urls())
 }
 
